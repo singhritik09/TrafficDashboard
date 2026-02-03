@@ -1,7 +1,10 @@
 import time
 import datetime
 from django.utils.deprecation import MiddlewareMixin
-from security.traffic_buffer import update_traffic_buffer
+from myapp.security.traffic_buffer import update_traffic_buffer
+
+#MiddlewareMixin wires middleware into django request lifecylce process_req before view and process_res after view 
+
 
 class TrafficLoggingMiddleware(MiddlewareMixin):
     def process_request(self,request):
@@ -9,7 +12,6 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
         
     def process_response(self, request, response):
         try:
-    
             ip=request.META.get('REMOTE_ADDR', '')
             path=request.path
             method=request.method
@@ -31,10 +33,16 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
                 status_code=status_code,
                 bytes_in=bytes_in,
                 bytes_out=bytes_out,
-                timestamp=datetime.datetime.now(),
                 user_agent=request.META.get('HTTP_USER_AGENT', '-') )   
-            
-        except Exception:
-            pass
+
+        except Exception as e:
+            print(f"Error in TrafficLoggingMiddleware: {e}")
 
         return response
+
+# Incoming Request
+#    ↓
+# TrafficLoggingMiddleware
+#    ↓   (aggregates stats)
+# TRAFFIC_BUFFER (in-memory)
+#    ↓

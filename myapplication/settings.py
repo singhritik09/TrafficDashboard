@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'myapp.middleware.TrafficLoggingMiddleware',  # 👈 add this
-
+    'myapp.security.traffic_logger.TrafficLoggingMiddleware', 
 ]
 
 ROOT_URLCONF = 'myapplication.urls'
