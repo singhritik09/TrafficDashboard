@@ -4,13 +4,12 @@ from django.views import View
 
 from django.http import JsonResponse
 from myapp.security.traffic_buffer import get_traffic_buffer_snapshot, update_traffic_buffer, TRAFFIC_BUFFER
-# Create your views here.
 
 class HomeView(View):
     def get(self, request):
         template_name = 'home.html'
-        # return HttpResponse("Welcome to the Home Page!")    
-        return render(request, template_name)
+        context={}
+        return render(request, template_name,context=context)
 
 class StatusView(View):
     def get(self, request):

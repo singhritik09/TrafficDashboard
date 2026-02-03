@@ -23,7 +23,6 @@ def traffic_bucket():
 TRAFFIC_BUFFER = defaultdict(traffic_bucket)
 
 # This function is called on every request (usually from middleware).
-from datetime import datetime
 
 def update_traffic_buffer(ip, path, method, status_code, bytes_in, bytes_out, user_agent):
     timestamp = datetime.utcnow()
