@@ -7,6 +7,7 @@ from myapp.security.traffic_buffer import update_traffic_buffer
 
 
 class TrafficLoggingMiddleware(MiddlewareMixin):
+    # Runs before the request reaches the view
     def process_request(self,request):
         request._start_time = time.time()
         
@@ -18,14 +19,13 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
             status_code=response.status_code
             if request.body:
                 bytes_in=len(request.body)
-            else: 
-                bytes_in=0
-            
+            else:
+                bytes_in=0   
             if response.content:
                 bytes_out=len(response.content) 
             else:   
                 bytes_out=0
-                
+            user_agent=request.META.get('HTTP_USER_AGENT', '')
             update_traffic_buffer(
                 ip=ip,
                 path=path,
@@ -33,7 +33,8 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
                 status_code=status_code,
                 bytes_in=bytes_in,
                 bytes_out=bytes_out,
-                user_agent=request.META.get('HTTP_USER_AGENT', '-') )   
+                user_agent=user_agent)
+               
 
         except Exception as e:
             print(f"Error in TrafficLoggingMiddleware: {e}")

@@ -44,7 +44,7 @@ def update_traffic_buffer(ip, path, method, status_code, bytes_in, bytes_out, us
 def get_traffic_buffer_snapshot():
     with buffer_lock:
         return {
-            ip: {
+            traffic_profile: {
                 "count": b["count"],
                 "error_count": b["error_count"],
                 "bytes_in": b["bytes_in"],
@@ -53,7 +53,7 @@ def get_traffic_buffer_snapshot():
                 "user_agents": dict(b["user_agents"]),
                 "last_seen": b["last_seen"].isoformat() if b["last_seen"] else None,
             }
-            for ip, b in TRAFFIC_BUFFER.items()
+            for traffic_profile, b in TRAFFIC_BUFFER.items()
         }
 
 # O(1) writing data for each request

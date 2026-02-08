@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import requests
-# from myapp.security.traffic_buffer import get_traffic_buffer_snapshot
+from myapp.security.traffic_buffer import get_traffic_buffer_snapshot
 
 uri="mongodb://127.0.0.1:27017/application-logs"
 client = MongoClient(uri)
@@ -21,7 +21,6 @@ def write_log(log_data):
     db = client['application-logs']
     collection = db['traffic_logs']
     
-    find_ip=collection.find_one({"ip": log_data.get("127.0.0.1")})
     collection.insert_one(log_data)
 
 def get_logs():
@@ -29,7 +28,7 @@ def get_logs():
     return request.json()
 if __name__ == "__main__":
     # check_mongo_connection()
-    # stats = get_traffic_buffer_snapshot()
-    stats = get_logs()
+    stats = get_traffic_buffer_snapshot()
+    # stats = get_logs()
     print(stats)
     write_log(stats)
