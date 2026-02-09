@@ -9,6 +9,8 @@ class HomeView(View):
     def get(self, request):
         template_name = 'home.html'
         context={}
+        traffic_stats=get_traffic_buffer_snapshot()
+        context['traffic_stats'] = traffic_stats
         return render(request, template_name,context=context)
 
 class StatusView(View):

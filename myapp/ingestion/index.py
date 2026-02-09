@@ -31,4 +31,4 @@ if __name__ == "__main__":
     stats = get_traffic_buffer_snapshot()
     # stats = get_logs()
     print(stats)
-    write_log(stats)
+    # write_log(stats)
