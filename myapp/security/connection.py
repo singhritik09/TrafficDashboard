@@ -1,5 +1,5 @@
 import pymongo
-
+from myapp.security.traffic_buffer import get_traffic_buffer_snapshot
 from myapp.ingestion.index import check_mongo_connection
 
 URL="mongodb://127.0.0.1:27017/application-logs"
@@ -19,7 +19,6 @@ def get_db():
     print(f"Collections in 'application-logs' database: {collection}")
     return db
 
-
 def get_traffic_logs():
     db=get_db()
     collection=db['traffic_logs']
@@ -30,3 +29,5 @@ def get_traffic_logs():
 if __name__ == "__main__":
     check_mongo_connection()
     get_traffic_logs()
+    traffic_stats = get_traffic_buffer_snapshot()
+    print(f"TRAFFIC STATS: {traffic_stats}")
