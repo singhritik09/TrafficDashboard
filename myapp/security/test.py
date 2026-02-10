@@ -6,7 +6,7 @@ producer= KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=lam
 
 message={
     "type":"health_check",
-    "message":"Application is running",
+    "message":"Application is running NEW CHECK",
     "timestamp": time.time(),
     "status":"ok"
     }
