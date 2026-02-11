@@ -7,35 +7,18 @@ from kafka import KafkaProducer
 producer= KafkaProducer(
     bootstrap_servers='localhost:9092', 
     value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-    linger_ms=100,          # batch messages
-    retries=5
+    acks=1,# Wait for acknowledgment from leader only
+    linger_ms=50, # Batch messages for up to 10ms
+    # batch_size=32*1024, # Batch up to 32KB of messages
+    # max_request_size=128*1024, # Max size of a single message is 128KB
+    retries=3
 )
 
-@shared_task(
-    bind=True,
-    autoretry_for=(Exception,),
-    retry_backoff=5,
-    retry_kwargs={'max_retries': 5}
-)
-
-def push_snapshot_to_kafka(self):
+@shared_task(autoretry_for=(Exception,), retry_backoff=3, retry_kwargs={"max_retries": 3})
+def push_snapshot_to_kafka(event=None):
     try:
-        snapshot=get_traffic_buffer_snapshot()
-        
-        if not snapshot:
-            print("No traffic data to send.")
-            return
-        
-        message={
-            "type":"traffic_snapshot",
-            "timestamp": time.time(),
-            "data": snapshot
-        }
-        producer.send('traffic_snapshots', message)
-        
-        producer.flush()
-        
-        return f"Pushed snapshot with {len(snapshot)} IPs"
+        producer.send('traffic_snapshots', event)
+        return f"Pushed snapshot with {event.get('ip', [])}"
     
     except Exception as e:
         print(f"Error getting traffic buffer snapshot: {e}")

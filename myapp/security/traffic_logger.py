@@ -1,8 +1,7 @@
 import time
 import datetime
 from django.utils.deprecation import MiddlewareMixin
-from myapp.security.traffic_buffer import update_traffic_buffer
-
+from myapp.tasks import push_snapshot_to_kafka
 #MiddlewareMixin wires middleware into django request lifecylce process_req before view and process_res after view 
 
 
@@ -26,16 +25,18 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
             else:   
                 bytes_out=0
             user_agent=request.META.get('HTTP_USER_AGENT', '')
-            update_traffic_buffer(
-                ip=ip,
-                path=path,
-                method=method,
-                status_code=status_code,
-                bytes_in=bytes_in,
-                bytes_out=bytes_out,
-                user_agent=user_agent)
-               
 
+            event={
+                'ip': ip,
+                'path': path,
+                'method': method,
+                'status_code': status_code,
+                'bytes_in': bytes_in,
+                'bytes_out': bytes_out,
+                'user_agent': user_agent
+            }
+            # Sending async event to Celery task to push to Kafka
+            push_snapshot_to_kafka.delay(event)
         except Exception as e:
             print(f"Error in TrafficLoggingMiddleware: {e}")
 
@@ -48,5 +49,5 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
 #    ↓
 # TrafficLoggingMiddleware
 #    ↓   (aggregates stats)
-# TRAFFIC_BUFFER (in-memory)
+# Celery Task (push_snapshot_to_kafka) every 5 seconds
 #    ↓

@@ -37,16 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_beat',
+    # 'django_celery_beat',
 
 ]
 
-CELERY_BEAT_SCHEDULE = {
-    "push-traffic-every-5-seconds": {
-        "task": "myapp.tasks.push_snapshot_to_kafka",
-        "schedule": 5.0,
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     "push-traffic-every-5-seconds": {
+#         "task": "myapp.tasks.push_snapshot_to_kafka",
+#         "schedule": 5.0,
+#     }
+# }
 
 
 MIDDLEWARE = [
