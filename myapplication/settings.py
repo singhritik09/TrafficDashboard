@@ -37,7 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
+
 ]
+
+CELERY_BEAT_SCHEDULE = {
+    "push-traffic-every-5-seconds": {
+        "task": "myapp.tasks.push_snapshot_to_kafka",
+        "schedule": 5.0,
+    }
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,3 +133,27 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# DB 0 → task messages
+# DB 1 → task results
+
+# Celery Configuration Options
+CELERY_BROKER_URL='redis://localhost:6379/0'
+CELERY_RESULT_BACKEND='redis://localhost:6379/1'
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER="json"
+
+CELERY_TIMEZONE = 'UTC'
+
+
+
+# | ----------------------- | ------------------------------- |
+# | `CELERY_BROKER_URL`     | Where tasks are queued          |
+# | `CELERY_RESULT_BACKEND` | Where results/status are stored |
+# | `ACCEPT_CONTENT`        | Allowed message formats         |
+# | `TASK_SERIALIZER`       | How tasks are encoded           |
+# | `RESULT_SERIALIZER`     | How results are encoded         |
+# | `TIMEZONE`              | Time handling                   |

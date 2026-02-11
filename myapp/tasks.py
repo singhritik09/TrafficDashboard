@@ -1,5 +1,5 @@
 from celery import shared_task
-from .traffic_buffer import  get_traffic_buffer_snapshot
+from myapp.security.traffic_buffer import  get_traffic_buffer_snapshot
 import json
 import time
 from kafka import KafkaProducer
@@ -22,7 +22,7 @@ def push_snapshot_to_kafka(self):
     try:
         snapshot=get_traffic_buffer_snapshot()
         
-        if snapshot==None:
+        if not snapshot:
             print("No traffic data to send.")
             return
         

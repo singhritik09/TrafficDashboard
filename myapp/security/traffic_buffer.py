@@ -61,6 +61,6 @@ def get_traffic_buffer_snapshot():
         # print(f"Traffic Buffer Snapshot: {TRAFFIC_BUFFER.keys()}")
         # print(f"Traffic Buffer Snapshot: {(snapshot)}")
         # print(f"length of snapshot: {len(snapshot)}")
-        TRAFFIC_BUFFER.clear()
+        # TRAFFIC_BUFFER.clear()
         return snapshot
 # O(1) writing data for each request
