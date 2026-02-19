@@ -17,6 +17,7 @@ producer= KafkaProducer(
 @shared_task(autoretry_for=(Exception,), retry_backoff=3, retry_kwargs={"max_retries": 3})
 def push_snapshot_to_kafka(event=None):
     try:
+        print("Getting traffic buffer snapshot...",event)
         producer.send('traffic_snapshots', event)
         return f"Pushed snapshot with {event.get('ip', [])}"
     

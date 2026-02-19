@@ -11,6 +11,8 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
         request._start_time = time.time()
         
     def process_response(self, request, response):
+        print("Middleware triggered")
+
         try:
             ip=request.META.get('REMOTE_ADDR', '')
             path=request.path
@@ -36,6 +38,7 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
                 'user_agent': user_agent
             }
             # Sending async event to Celery task to push to Kafka
+            print(f"Scheduling task to push snapshot to Kafka: {event}")
             push_snapshot_to_kafka.delay(event)
         except Exception as e:
             print(f"Error in TrafficLoggingMiddleware: {e}")
