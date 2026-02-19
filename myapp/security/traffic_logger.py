@@ -45,9 +45,14 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
 
 
 
-# Incoming Request
-#    ↓
-# TrafficLoggingMiddleware
-#    ↓   (aggregates stats)
-# Celery Task (push_snapshot_to_kafka) every 5 seconds
-#    ↓
+# Client → Django → Middleware → Celery → Kafka
+
+# Django → Redis (Celery broker queue)
+# Celery Worker → Kafka: Takes event from Redis queue
+# Executes task
+# Calls Kafka producer
+
+# celery -A myapplication worker --loglevel=info
+
+# kafka-console-consumer --bootstrap-server localhost:9092 --topic traffic_snapshots --from-beginning
+# Kafka Producer with retries, acks, batching
